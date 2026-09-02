@@ -108,7 +108,13 @@ export function BarangForm({
       <Field label="Foto Barang" htmlFor="foto">
         {fotoUrl && (
           <div className="relative mb-2 h-32 w-32 overflow-hidden rounded-md border border-black/10 dark:border-white/10">
-            <Image src={fotoUrl} alt="Foto saat ini" fill className="object-cover" />
+            <Image
+              src={fotoUrl}
+              alt="Foto saat ini"
+              fill
+              sizes="128px"
+              className="object-cover"
+            />
           </div>
         )}
         <input
