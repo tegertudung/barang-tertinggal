@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatTanggalWaktu, labelStatusKlaim } from "@/lib/format";
+import { formatTanggalWaktu } from "@/lib/format";
 import { formatNomorKlaim } from "@/types/database";
+import { KlaimStatusBadge } from "@/components/StatusBadge";
 
 export const revalidate = 0;
 
@@ -96,9 +97,7 @@ export default async function DaftarKlaimPage({
                     {formatTanggalWaktu(klaim.created_at)}
                   </p>
                 </div>
-                <span className="shrink-0 rounded-full bg-black/5 px-2.5 py-1 text-xs font-medium dark:bg-white/10">
-                  {labelStatusKlaim(klaim.status)}
-                </span>
+                <KlaimStatusBadge status={klaim.status} />
               </Link>
             );
           })}

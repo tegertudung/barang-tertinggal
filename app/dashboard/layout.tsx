@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardNav } from "@/components/DashboardNav";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
+
+function getInitials(nama: string) {
+  const parts = nama.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 export default async function DashboardLayout({
   children,
@@ -23,23 +31,35 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-full flex-1 flex-col md:flex-row">
-      <aside className="border-b border-black/10 p-4 md:w-56 md:shrink-0 md:border-b-0 md:border-r dark:border-white/10">
-        <Link href="/dashboard" className="mb-1 block">
-          <span className="block text-sm font-semibold tracking-wide text-blue-700 dark:text-blue-400">
-            BARANG TERTINGGAL
+    <div className="flex min-h-full flex-1 bg-brand-page dark:bg-neutral-950">
+      <aside className="hidden w-64 shrink-0 flex-col bg-brand-primary p-4 md:flex dark:bg-brand-primary">
+        <Link href="/dashboard" className="mb-6 flex items-center gap-3 px-1">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-white/40 text-xs font-bold text-white/90">
+            BP
           </span>
-          <span className="block text-xs text-black/60 dark:text-white/60">
-            Panel Petugas
+          <span className="text-sm font-semibold leading-tight text-white">
+            Balai Perpustakaan
+            <br />
+            DPAD DIY
           </span>
         </Link>
-        <p className="mb-4 truncate text-xs text-black/50 dark:text-white/50">
-          {nama}
-        </p>
         <DashboardNav />
       </aside>
 
-      <main className="flex-1 p-4 md:p-6">{children}</main>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-white px-4 py-3 md:px-6 dark:border-white/10 dark:bg-neutral-900">
+          <span className="text-sm font-medium text-black/70 dark:text-white/70">
+            {nama}
+          </span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary/10 text-xs font-bold text-brand-primary dark:bg-brand-primary/30 dark:text-white/90">
+            {getInitials(nama)}
+          </span>
+        </header>
+
+        <main className="flex-1 p-4 pb-20 md:p-6 md:pb-6">{children}</main>
+      </div>
+
+      <MobileBottomNav />
     </div>
   );
 }

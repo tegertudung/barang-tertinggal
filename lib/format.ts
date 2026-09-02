@@ -39,3 +39,14 @@ export function labelStatusBarang(status: string) {
 export function labelStatusKlaim(status: string) {
   return CLAIM_STATUS_LABEL[status] ?? status;
 }
+
+/** ISO timestamp N hari yang lalu dari sekarang. */
+export function daysAgoIso(days: number) {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+/** Jumlah hari bulat sejak `createdAt` hingga sekarang (minimal 0). */
+export function daysSince(createdAt: string) {
+  const ms = Date.now() - new Date(createdAt).getTime();
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
+}

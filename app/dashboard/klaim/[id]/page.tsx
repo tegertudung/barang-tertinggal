@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { formatTanggal, formatTanggalWaktu, labelStatusKlaim } from "@/lib/format";
+import { formatTanggal, formatTanggalWaktu } from "@/lib/format";
 import { formatNomorKlaim } from "@/types/database";
 import { VerifikasiKlaimForm } from "@/components/VerifikasiKlaimForm";
+import { KlaimStatusBadge } from "@/components/StatusBadge";
 import type { Item, Claim } from "@/types/database";
 
 export const revalidate = 0;
@@ -46,9 +47,7 @@ export default async function DetailKlaimPage({
             Diajukan {formatTanggalWaktu(klaim.created_at)}
           </p>
         </div>
-        <span className="shrink-0 rounded-full bg-black/5 px-3 py-1 text-xs font-medium dark:bg-white/10">
-          {labelStatusKlaim(klaim.status)}
-        </span>
+        <KlaimStatusBadge status={klaim.status} />
       </div>
 
       <div className="mb-6 rounded-lg border border-black/10 p-4 dark:border-white/10">

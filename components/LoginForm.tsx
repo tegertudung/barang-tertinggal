@@ -14,7 +14,7 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium">
+        <label htmlFor="email" className="mb-1 block text-sm font-medium text-black/80">
           Email
         </label>
         <input
@@ -23,12 +23,12 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="username"
-          className="w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5"
+          className="w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm text-black outline-none focus:border-brand-accent"
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="mb-1 block text-sm font-medium">
+        <label htmlFor="password" className="mb-1 block text-sm font-medium text-black/80">
           Password
         </label>
         <input
@@ -37,7 +37,7 @@ export function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5"
+          className="w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm text-black outline-none focus:border-brand-accent"
         />
       </div>
 
@@ -50,7 +50,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-md bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60"
+        className="w-full rounded-md bg-brand-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
       >
         {isPending ? "Memproses..." : "Login"}
       </button>

@@ -2,15 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { logout } from "@/lib/actions/auth";
 import {
   IconBarChart,
   IconBox,
   IconDashboard,
-  IconLogout,
   IconMail,
   IconRefresh,
-  IconUser,
 } from "@/components/icons";
 
 const MENU = [
@@ -19,14 +16,13 @@ const MENU = [
   { href: "/dashboard/klaim", label: "Klaim Barang", icon: IconMail },
   { href: "/dashboard/pengembalian", label: "Pengembalian", icon: IconRefresh },
   { href: "/dashboard/laporan", label: "Laporan", icon: IconBarChart },
-  { href: "/dashboard/profil", label: "Profil", icon: IconUser },
 ];
 
-export function DashboardNav() {
+export function MobileBottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-col gap-1">
+    <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-black/10 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-white/10 dark:bg-neutral-900">
       {MENU.map((item) => {
         const active = item.exact
           ? pathname === item.href
@@ -37,27 +33,17 @@ export function DashboardNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+            className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-medium ${
               active
-                ? "bg-white/15 text-white"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+                ? "text-brand-primary dark:text-green-400"
+                : "text-black/50 dark:text-white/50"
             }`}
           >
-            <Icon className="h-[18px] w-[18px] shrink-0" />
+            <Icon className="h-5 w-5" />
             {item.label}
           </Link>
         );
       })}
-
-      <form action={logout} className="mt-4 border-t border-white/10 pt-3">
-        <button
-          type="submit"
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white"
-        >
-          <IconLogout className="h-[18px] w-[18px] shrink-0" />
-          Logout
-        </button>
-      </form>
     </nav>
   );
 }

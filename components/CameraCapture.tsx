@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { IconCamera } from "@/components/icons";
 
 /**
  * Komponen kamera bukti serah terima. Alur:
@@ -86,60 +87,64 @@ export function CameraCapture({
     bukaKamera();
   }
 
+  if (error) {
+    return (
+      <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        {error}
+      </p>
+    );
+  }
+
+  if (previewUrl) {
+    return (
+      <div className="space-y-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={previewUrl}
+          alt="Preview bukti serah terima"
+          className="w-full max-w-sm rounded-xl border border-black/10 dark:border-white/10"
+        />
+        <button
+          type="button"
+          onClick={ambilUlang}
+          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/20 dark:hover:bg-white/10"
+        >
+          Ambil Ulang
+        </button>
+      </div>
+    );
+  }
+
+  if (isCameraOn) {
+    return (
+      <div className="space-y-3">
+        <video
+          ref={videoRef}
+          playsInline
+          muted
+          className="w-full max-w-sm rounded-xl border border-black/10 bg-black dark:border-white/10"
+        />
+        <button
+          type="button"
+          onClick={ambilFoto}
+          className="rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"
+        >
+          Ambil Foto
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-3">
-      {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </p>
-      )}
-
-      {previewUrl ? (
-        <div className="space-y-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={previewUrl}
-            alt="Preview bukti serah terima"
-            className="w-full max-w-sm rounded-md border border-black/10 dark:border-white/10"
-          />
-          <button
-            type="button"
-            onClick={ambilUlang}
-            className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/20 dark:hover:bg-white/10"
-          >
-            Ambil Ulang
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <video
-            ref={videoRef}
-            playsInline
-            muted
-            className={`w-full max-w-sm rounded-md border border-black/10 bg-black dark:border-white/10 ${
-              isCameraOn ? "block" : "hidden"
-            }`}
-          />
-
-          {!isCameraOn ? (
-            <button
-              type="button"
-              onClick={bukaKamera}
-              className="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-            >
-              📷 Buka Kamera
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={ambilFoto}
-              className="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-            >
-              Ambil Foto
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+    <button
+      type="button"
+      onClick={bukaKamera}
+      className="flex w-full max-w-sm flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-black/15 bg-black/[0.02] py-12 text-center hover:border-amber-400 hover:bg-amber-50/50 dark:border-white/15 dark:bg-white/[0.02] dark:hover:border-amber-500/50 dark:hover:bg-amber-500/5"
+    >
+      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500 text-white">
+        <IconCamera className="h-6 w-6" />
+      </span>
+      <span className="text-sm font-semibold">Ambil Foto</span>
+    </button>
   );
 }

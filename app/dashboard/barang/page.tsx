@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatTanggal, labelStatusBarang } from "@/lib/format";
+import { formatTanggal } from "@/lib/format";
 import { DeleteBarangButton } from "@/components/DeleteBarangButton";
+import { BarangStatusBadge } from "@/components/StatusBadge";
 import type { Item } from "@/types/database";
 
 export const revalidate = 0;
@@ -114,9 +115,7 @@ export default async function DataBarangPage({
                     {formatTanggal(item.tanggal_ditemukan)}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="rounded-full bg-black/5 px-2.5 py-1 text-xs font-medium dark:bg-white/10">
-                      {labelStatusBarang(item.status)}
-                    </span>
+                    <BarangStatusBadge status={item.status} />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-3">
