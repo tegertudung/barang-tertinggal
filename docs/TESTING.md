@@ -24,7 +24,8 @@ sebagian oleh pengguna langsung.
 
 1. **RLS tanpa GRANT dasar** — tabel dibuat dengan "Automatically expose new
    tables" nonaktif, sehingga `anon`/`authenticated` tidak punya hak akses
-   dasar walau RLS policy benar → diperbaiki dengan `docs/grants.sql`.
+   dasar walau RLS policy benar → diperbaiki dengan GRANT (sudah
+   digabung ke `docs/schema.sql`).
 2. **Klaim publik butuh baca balik nomor klaim** — insert biasa butuh hak
    SELECT yang seharusnya tidak diberikan ke publik → diganti pakai
    database function `submit_claim` (`SECURITY DEFINER`) yang hanya

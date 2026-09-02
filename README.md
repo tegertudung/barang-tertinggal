@@ -32,16 +32,12 @@ Next.js (App Router) · TypeScript · Tailwind CSS · Supabase (Postgres, Auth, 
 
 ### 1. Setup Supabase (Fase 2)
 
-1. Buat project baru di [supabase.com](https://supabase.com).
+1. Buat project baru di [supabase.com](https://supabase.com). Saat membuat project, matikan opsi **"Automatically expose new tables"** (lebih aman — akses tabel akan diatur eksplisit lewat RLS + GRANT di `schema.sql`).
 2. Salin `.env.local.example` menjadi `.env.local`, lalu isi dengan URL & Publishable/anon key project Anda (Project Settings → API Keys).
-3. Jalankan file SQL berikut di Supabase **SQL Editor**, berurutan:
-   1. [`docs/schema.sql`](docs/schema.sql) — tabel, enum, trigger, RLS policy
-   2. [`docs/grants.sql`](docs/grants.sql) — GRANT akses tabel untuk anon/authenticated
-   3. [`docs/storage-policies.sql`](docs/storage-policies.sql) — policy storage (setelah bucket dibuat, langkah 4)
-   4. [`docs/migration-nomor-klaim.sql`](docs/migration-nomor-klaim.sql) — kolom nomor urut klaim
-   5. [`docs/migration-submit-claim-function.sql`](docs/migration-submit-claim-function.sql) — function `submit_claim`
-4. Buat dua bucket Storage: `barang-photos` (public) dan `bukti-serah-terima` (private).
-5. Buat akun petugas pertama lewat Supabase Auth (Authentication → Users → Add user, centang **Auto Confirm User**), lalu jalankan:
+3. Jalankan [`docs/schema.sql`](docs/schema.sql) di Supabase **SQL Editor** — satu file ini sudah mencakup tabel, enum, trigger, RLS policy, GRANT, dan function `submit_claim`.
+4. Buat dua bucket **Storage**: `barang-photos` (public) dan `bukti-serah-terima` (**bukan** public/private tetap default).
+5. Jalankan [`docs/storage-policies.sql`](docs/storage-policies.sql) di SQL Editor (setelah kedua bucket di atas ada).
+6. Buat akun petugas pertama lewat **Authentication → Users → Add user** (centang **Auto Confirm User**), salin User UID-nya, lalu jalankan di SQL Editor:
    ```sql
    insert into profiles (id, nama) values ('<UID user>', '<Nama Petugas>');
    ```

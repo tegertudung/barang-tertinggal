@@ -63,6 +63,9 @@ create index idx_items_kategori on items(kategori);
 
 ## Tabel `claims`
 
+`nomor_urut` (serial) dipakai untuk membentuk nomor klaim tampilan, mis.
+`CLM-2026-001` — lihat `formatNomorKlaim()` di [`types/database.ts`](../types/database.ts).
+
 ```sql
 create table claims (
   id uuid primary key default gen_random_uuid(),
@@ -75,6 +78,7 @@ create table claims (
   keterangan text,
   status claim_status not null default 'MENUNGGU',
   catatan_petugas text,
+  nomor_urut serial,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -144,11 +148,10 @@ create policy "items_update_staff" on items
 create policy "items_delete_staff" on items
   for delete to authenticated using (true);
 
--- claims: publik boleh insert (ajukan klaim), tapi tidak boleh select/update
--- (nomor klaim dikembalikan langsung dari hasil insert, tidak perlu select ulang)
-create policy "claims_insert_public" on claims
-  for insert with check (true);
-
+-- claims: publik TIDAK diberi policy insert/select sama sekali.
+-- Pengajuan klaim publik lewat function submit_claim() (lihat bawah),
+-- supaya publik tidak perlu hak SELECT ke tabel claims (mencegah
+-- pengunjung membaca data pengklaim lain).
 create policy "claims_select_staff" on claims
   for select to authenticated using (true);
 create policy "claims_update_staff" on claims
@@ -160,6 +163,82 @@ create policy "returns_all_staff" on returns
 ```
 
 > Catatan: kebijakan di atas adalah baseline untuk versi awal (satu role `petugas` dengan hak akses sama). Bisa diperketat lebih lanjut (mis. field-level privacy) pada iterasi berikutnya.
+
+## GRANT tabel
+
+RLS membatasi *baris* mana yang boleh diakses, tapi role tetap butuh hak
+akses dasar ke tabel. Kalau opsi "Automatically expose new tables"
+dimatikan saat membuat project Supabase (direkomendasikan, lebih aman),
+GRANT ini wajib dijalankan manual:
+
+```sql
+grant usage on schema public to anon, authenticated;
+
+grant select on items to anon, authenticated;
+grant insert, update, delete on items to authenticated;
+
+grant select, update on claims to authenticated;
+
+grant select, insert, update, delete on returns to authenticated;
+
+grant select on profiles to authenticated;
+```
+
+## Function `submit_claim`
+
+Satu-satunya jalur publik untuk mengajukan klaim (dipanggil lewat
+`supabase.rpc('submit_claim', ...)`). Berjalan sebagai `SECURITY
+DEFINER` sehingga bisa insert ke `claims` dan membaca status `items`
+tanpa publik perlu diberi GRANT langsung ke tabel-tabel tersebut —
+hanya mengembalikan `nomor_urut` & `created_at`, bukan seluruh baris.
+
+```sql
+create or replace function submit_claim(
+  p_item_id uuid,
+  p_nama_pengklaim text,
+  p_no_hp text,
+  p_waktu_kehilangan text,
+  p_lokasi_kehilangan text,
+  p_ciri_barang text,
+  p_keterangan text
+)
+returns table(nomor_urut int, created_at timestamptz)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_status item_status;
+begin
+  select status into v_status from items where id = p_item_id;
+
+  if v_status is null then
+    raise exception 'Barang tidak ditemukan.';
+  end if;
+
+  if v_status <> 'TERSIMPAN' then
+    raise exception 'Barang ini sudah tidak dapat diklaim.';
+  end if;
+
+  return query
+  insert into claims (
+    item_id, nama_pengklaim, no_hp, waktu_kehilangan,
+    lokasi_kehilangan, ciri_barang, keterangan, status
+  )
+  values (
+    p_item_id, p_nama_pengklaim, p_no_hp, p_waktu_kehilangan,
+    p_lokasi_kehilangan, p_ciri_barang, p_keterangan, 'MENUNGGU'
+  )
+  returning claims.nomor_urut, claims.created_at;
+end;
+$$;
+
+grant execute on function submit_claim(uuid, text, text, text, text, text, text)
+  to anon, authenticated;
+```
+
+Seluruh SQL di atas (tabel, RLS, GRANT, function) sudah digabung jadi
+satu file siap-jalan: [`docs/schema.sql`](schema.sql).
 
 ## Supabase Storage
 

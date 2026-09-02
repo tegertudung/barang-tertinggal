@@ -1,6 +1,11 @@
 -- =========================================================
 -- Sistem Informasi Barang Tertinggal — Schema Supabase
--- Jalankan seluruh file ini sekali di Supabase SQL Editor.
+-- Versi konsolidasi: sudah termasuk seluruh migration susulan
+-- (nomor urut klaim, function submit_claim, grants).
+-- Jalankan seluruh file ini sekali di Supabase SQL Editor pada
+-- project BARU. Untuk project yang sudah pernah menjalankan versi
+-- lama file ini + migration-*.sql secara terpisah, TIDAK PERLU
+-- dijalankan ulang (sudah setara).
 -- =========================================================
 
 -- Enum status
@@ -35,6 +40,8 @@ create index idx_items_status on items(status);
 create index idx_items_kategori on items(kategori);
 
 -- Tabel claims
+-- nomor_urut: dasar pembentukan nomor klaim tampilan (CLM-<tahun>-<3
+-- digit>), lihat types/database.ts -> formatNomorKlaim().
 create table claims (
   id uuid primary key default gen_random_uuid(),
   item_id uuid not null references items(id) on delete cascade,
@@ -46,6 +53,7 @@ create table claims (
   keterangan text,
   status claim_status not null default 'MENUNGGU',
   catatan_petugas text,
+  nomor_urut serial,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -100,10 +108,10 @@ create policy "items_update_staff" on items
 create policy "items_delete_staff" on items
   for delete to authenticated using (true);
 
--- claims: publik boleh insert (ajukan klaim), petugas boleh baca & update
-create policy "claims_insert_public" on claims
-  for insert with check (true);
-
+-- claims: publik TIDAK diberi policy insert/select langsung.
+-- Pengajuan klaim publik lewat function submit_claim() di bawah
+-- (SECURITY DEFINER), supaya publik tidak perlu hak SELECT ke tabel
+-- claims (mencegah pengunjung membaca data pengklaim lain).
 create policy "claims_select_staff" on claims
   for select to authenticated using (true);
 create policy "claims_update_staff" on claims
@@ -112,3 +120,68 @@ create policy "claims_update_staff" on claims
 -- returns: hanya petugas yang login yang boleh akses
 create policy "returns_all_staff" on returns
   for all to authenticated using (true) with check (true);
+
+-- =========================================================
+-- GRANT akses tabel untuk anon & authenticated.
+-- Diperlukan kalau opsi "Automatically expose new tables" dimatikan
+-- saat membuat project (rekomendasi kami, lebih aman) — RLS policy
+-- di atas membatasi baris, tapi role tetap butuh GRANT dasar dulu.
+-- =========================================================
+grant usage on schema public to anon, authenticated;
+
+grant select on items to anon, authenticated;
+grant insert, update, delete on items to authenticated;
+
+grant select, update on claims to authenticated;
+
+grant select, insert, update, delete on returns to authenticated;
+
+grant select on profiles to authenticated;
+
+-- =========================================================
+-- Function submit_claim: satu-satunya jalur publik untuk mengajukan
+-- klaim. SECURITY DEFINER supaya bisa insert ke claims & baca status
+-- items tanpa publik perlu diberi GRANT langsung ke tabel tsb.
+-- =========================================================
+create or replace function submit_claim(
+  p_item_id uuid,
+  p_nama_pengklaim text,
+  p_no_hp text,
+  p_waktu_kehilangan text,
+  p_lokasi_kehilangan text,
+  p_ciri_barang text,
+  p_keterangan text
+)
+returns table(nomor_urut int, created_at timestamptz)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_status item_status;
+begin
+  select status into v_status from items where id = p_item_id;
+
+  if v_status is null then
+    raise exception 'Barang tidak ditemukan.';
+  end if;
+
+  if v_status <> 'TERSIMPAN' then
+    raise exception 'Barang ini sudah tidak dapat diklaim.';
+  end if;
+
+  return query
+  insert into claims (
+    item_id, nama_pengklaim, no_hp, waktu_kehilangan,
+    lokasi_kehilangan, ciri_barang, keterangan, status
+  )
+  values (
+    p_item_id, p_nama_pengklaim, p_no_hp, p_waktu_kehilangan,
+    p_lokasi_kehilangan, p_ciri_barang, p_keterangan, 'MENUNGGU'
+  )
+  returning claims.nomor_urut, claims.created_at;
+end;
+$$;
+
+grant execute on function submit_claim(uuid, text, text, text, text, text, text)
+  to anon, authenticated;
