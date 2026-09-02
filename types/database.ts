@@ -40,8 +40,15 @@ export interface Claim {
   keterangan: string | null;
   status: ClaimStatus;
   catatan_petugas: string | null;
+  nomor_urut: number;
   created_at: string;
   updated_at: string;
+}
+
+/** Format tampilan: CLM-2026-001 */
+export function formatNomorKlaim(claim: Pick<Claim, "nomor_urut" | "created_at">) {
+  const year = new Date(claim.created_at).getFullYear();
+  return `CLM-${year}-${String(claim.nomor_urut).padStart(3, "0")}`;
 }
 
 export interface Return {
