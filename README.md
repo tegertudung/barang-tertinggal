@@ -25,7 +25,7 @@ Next.js (App Router) · TypeScript · Tailwind CSS · Supabase (Postgres, Auth, 
 - [x] Fase 10 — Proses pengembalian
 - [x] Fase 11 — Kamera & bukti foto
 - [x] Fase 12 — Laporan
-- [ ] Fase 13 — Testing
+- [x] Fase 13 — Testing (lihat [`docs/TESTING.md`](docs/TESTING.md))
 - [ ] Fase 14 — Deployment (Vercel)
 
 ## Getting Started
