@@ -2,9 +2,10 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition } from "react";
-import { KATEGORI_LIST } from "@/lib/categories";
+import { KATEGORI_LIST, kategoriIconName } from "@/lib/categories";
+import { Icon } from "@/components/Icon";
 
-/** Baris chip filter kategori, dipakai di bawah hero pada latar putih. */
+/** Baris chip filter kategori bergaya Material 3. */
 export function KategoriChips() {
   const router = useRouter();
   const pathname = usePathname();
@@ -22,12 +23,18 @@ export function KategoriChips() {
   }
 
   return (
-    <div className={`flex flex-wrap gap-2 ${isPending ? "opacity-60" : ""}`}>
-      <Chip label="Semua" active={activeKategori === ""} onClick={() => setKategori("")} />
+    <div className={`flex flex-1 flex-wrap items-center gap-2 overflow-x-auto ${isPending ? "opacity-60" : ""}`}>
+      <Chip
+        label="Semua"
+        icon="apps"
+        active={activeKategori === ""}
+        onClick={() => setKategori("")}
+      />
       {KATEGORI_LIST.map((kategori) => (
         <Chip
           key={kategori}
           label={kategori}
+          icon={kategoriIconName(kategori)}
           active={activeKategori === kategori}
           onClick={() => setKategori(kategori)}
         />
@@ -38,10 +45,12 @@ export function KategoriChips() {
 
 function Chip({
   label,
+  icon,
   active,
   onClick,
 }: {
   label: string;
+  icon: string;
   active: boolean;
   onClick: () => void;
 }) {
@@ -49,12 +58,13 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-150 ${
         active
-          ? "border-brand-primary bg-brand-primary text-white"
-          : "border-black/15 text-black/70 hover:bg-black/5"
+          ? "bg-m3-primary-container font-bold text-m3-on-primary shadow-xs"
+          : "border border-m3-outline-variant bg-m3-surface-container-lowest text-m3-on-surface-variant hover:border-m3-primary hover:text-m3-primary"
       }`}
     >
+      <Icon name={icon} className="!text-[16px]" />
       {label}
     </button>
   );

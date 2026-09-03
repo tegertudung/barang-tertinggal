@@ -2,9 +2,9 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
-import { IconSearch } from "@/components/icons";
+import { Icon } from "@/components/Icon";
 
-/** Search bar putih dipakai di dalam hero hijau tua. */
+/** Search bar utama di halaman Beranda. */
 export function SearchBar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -27,23 +27,26 @@ export function SearchBar() {
         e.preventDefault();
         submit();
       }}
-      className="flex gap-2 rounded-xl bg-white p-1.5 shadow-sm"
+      className="flex flex-col gap-2.5 md:flex-row"
     >
-      <div className="flex flex-1 items-center gap-2 px-2.5">
-        <IconSearch className="h-4 w-4 shrink-0 text-black/40" />
+      <div className="relative flex-1">
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-m3-on-surface-variant">
+          <Icon name="search" className="!text-[22px]" />
+        </span>
         <input
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Cari nama barang, misalnya dompet atau flashdisk"
-          className="w-full bg-transparent py-2 text-sm text-black outline-none placeholder:text-black/40"
+          placeholder="Ketik nama barang, kode registrasi, atau lokasi ruang..."
+          className="w-full rounded-xl border border-m3-outline-variant/60 bg-m3-surface-container-low/40 py-3 pl-11 pr-4 text-sm text-m3-on-surface outline-none transition-all placeholder:text-m3-on-surface-variant/70 focus:border-m3-primary focus:bg-m3-surface-container-lowest focus:ring-2 focus:ring-m3-primary/20"
         />
       </div>
       <button
         type="submit"
-        className="shrink-0 rounded-lg bg-brand-accent px-5 py-2 text-sm font-semibold text-white hover:bg-amber-700"
+        className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-m3-secondary-container px-7 py-3 text-sm font-semibold text-m3-on-secondary-container shadow-xs transition-all hover:bg-m3-secondary hover:text-white"
       >
-        Cari
+        <Icon name="search" className="!text-[18px]" />
+        Cari Barang
       </button>
     </form>
   );

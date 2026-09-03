@@ -1,12 +1,4 @@
-import {
-  IconBag,
-  IconBox,
-  IconFileText,
-  IconKey,
-  IconPlug,
-  IconShirt,
-  IconWallet,
-} from "@/components/icons";
+import { Icon } from "@/components/Icon";
 
 /**
  * Daftar kategori barang. Dipakai untuk filter di halaman publik
@@ -25,6 +17,28 @@ export const KATEGORI_LIST = [
 
 export type Kategori = (typeof KATEGORI_LIST)[number];
 
+/** Nama ikon Material Symbols per kategori. */
+export function kategoriIconName(kategori: string) {
+  switch (kategori) {
+    case "Dompet":
+      return "account_balance_wallet";
+    case "Tas":
+      return "shopping_bag";
+    case "Elektronik":
+      return "devices";
+    case "Kunci":
+      return "key";
+    case "Dokumen":
+      return "description";
+    case "Aksesoris":
+      return "watch";
+    case "Pakaian":
+      return "checkroom";
+    default:
+      return "inventory_2";
+  }
+}
+
 /**
  * Render ikon placeholder per kategori (dipakai di kartu barang &
  * detail). Sengaja berupa fungsi yang mengembalikan elemen JSX
@@ -32,21 +46,5 @@ export type Kategori = (typeof KATEGORI_LIST)[number];
  * saat render" oleh React Compiler.
  */
 export function renderKategoriIcon(kategori: string, className?: string) {
-  switch (kategori) {
-    case "Dompet":
-    case "Aksesoris":
-      return <IconWallet className={className} />;
-    case "Tas":
-      return <IconBag className={className} />;
-    case "Elektronik":
-      return <IconPlug className={className} />;
-    case "Kunci":
-      return <IconKey className={className} />;
-    case "Dokumen":
-      return <IconFileText className={className} />;
-    case "Pakaian":
-      return <IconShirt className={className} />;
-    default:
-      return <IconBox className={className} />;
-  }
+  return <Icon name={kategoriIconName(kategori)} className={className} />;
 }

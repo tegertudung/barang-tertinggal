@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { createClaim, type KlaimFormState } from "@/lib/actions/klaim";
 import Link from "next/link";
 import { renderKategoriIcon } from "@/lib/categories";
-import { IconCheckCircle, IconInfo } from "@/components/icons";
+import { Icon } from "@/components/Icon";
 
 const initialState: KlaimFormState = {};
 
@@ -25,28 +25,28 @@ export function KlaimForm({
 
   if (state.nomorKlaim) {
     return (
-      <div className="flex flex-col items-center rounded-xl border border-black/10 bg-white p-8 text-center">
+      <div className="flex flex-col items-center rounded-xl border border-m3-outline-variant/50 bg-m3-surface-container-lowest p-8 text-center">
         <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600">
-          <IconCheckCircle className="h-7 w-7" />
+          <Icon name="check_circle" className="!text-[28px]" />
         </span>
         <h2 className="text-lg font-bold">Klaim Berhasil Diajukan</h2>
 
-        <div className="mt-4 w-full max-w-xs rounded-lg border border-black/10 bg-brand-page px-4 py-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-black/45">
+        <div className="mt-4 w-full max-w-xs rounded-lg border border-m3-outline-variant/40 bg-m3-surface-container-low px-4 py-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-m3-on-surface-variant">
             Nomor Klaim
           </p>
-          <p className="mt-1 text-xl font-bold tracking-tight text-brand-primary">
+          <p className="mt-1 text-xl font-bold tracking-tight text-m3-primary">
             {state.nomorKlaim}
           </p>
         </div>
 
-        <p className="mt-4 max-w-sm text-sm text-black/60">
+        <p className="mt-4 max-w-sm text-sm text-m3-on-surface-variant">
           Petugas kami akan menghubungi Anda melalui nomor HP yang telah
           didaftarkan untuk proses verifikasi lebih lanjut.
         </p>
 
         <div className="mt-4 flex w-full items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-left text-sm text-amber-900">
-          <IconInfo className="mt-0.5 h-4 w-4 shrink-0" />
+          <Icon name="info" className="mt-0.5 !text-[18px] shrink-0" />
           <span>
             Mohon membawa kartu identitas asli (KTP/SIM/KTM) saat mengambil
             barang di meja layanan.
@@ -55,7 +55,7 @@ export function KlaimForm({
 
         <Link
           href="/"
-          className="mt-6 rounded-lg border border-black/15 px-5 py-2.5 text-sm font-semibold hover:bg-black/5"
+          className="mt-6 rounded-lg border border-m3-outline-variant px-5 py-2.5 text-sm font-semibold text-m3-on-surface hover:bg-m3-surface-container"
         >
           Kembali ke Beranda
         </Link>
@@ -65,12 +65,12 @@ export function KlaimForm({
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-brand-page p-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-brand-primary">
-          {renderKategoriIcon(kategori, "h-5 w-5")}
+      <div className="flex items-center gap-3 rounded-xl border border-m3-outline-variant/40 bg-m3-surface-container-low p-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-m3-surface-container-lowest text-m3-primary">
+          {renderKategoriIcon(kategori, "!text-[20px]")}
         </span>
         <div className="min-w-0">
-          <p className="text-xs text-black/50">Mengajukan klaim untuk</p>
+          <p className="text-xs text-m3-on-surface-variant">Mengajukan klaim untuk</p>
           <p className="truncate text-sm font-semibold">
             {namaBarang} · {lokasi}
           </p>
@@ -142,7 +142,7 @@ export function KlaimForm({
         </Field>
 
         <div>
-          <label className="flex items-start gap-2 text-sm text-black/70">
+          <label className="flex items-start gap-2 text-sm text-m3-on-surface-variant">
             <input
               type="checkbox"
               name="persetujuan"
@@ -166,7 +166,7 @@ export function KlaimForm({
         <button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-lg bg-brand-accent px-4 py-3 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+          className="w-full rounded-lg bg-m3-secondary-container px-4 py-3 text-sm font-semibold text-m3-on-secondary-container shadow-xs hover:bg-m3-secondary hover:text-white disabled:opacity-60"
         >
           {isPending ? "Mengirim..." : "Ajukan Klaim"}
         </button>
@@ -176,10 +176,10 @@ export function KlaimForm({
 }
 
 function inputClass(hasError: boolean) {
-  return `w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-black outline-none placeholder:text-black/35 ${
+  return `w-full rounded-lg border bg-m3-surface-container-lowest px-3 py-2.5 text-sm text-m3-on-surface outline-none placeholder:text-m3-on-surface-variant/60 ${
     hasError
       ? "border-red-400 focus:border-red-500"
-      : "border-black/15 focus:border-brand-accent"
+      : "border-m3-outline-variant/60 focus:border-m3-primary"
   }`;
 }
 
