@@ -6,12 +6,15 @@ import { formatNomorKlaim } from "@/types/database";
 
 export type KlaimFormState = {
   error?: string;
+  fieldErrors?: Record<string, string>;
   nomorKlaim?: string;
 };
 
 function ambilString(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
+
+const NO_HP_REGEX = /^08[0-9]{8,12}$/;
 
 export async function createClaim(
   itemId: string,
@@ -24,10 +27,27 @@ export async function createClaim(
   const lokasi_kehilangan = ambilString(formData, "lokasi_kehilangan");
   const ciri_barang = ambilString(formData, "ciri_barang");
   const keterangan = ambilString(formData, "keterangan");
+  const persetujuan = formData.get("persetujuan");
 
-  if (!nama_pengklaim || !no_hp || !ciri_barang) {
+  const fieldErrors: Record<string, string> = {};
+
+  if (!nama_pengklaim) fieldErrors.nama_pengklaim = "Nama lengkap wajib diisi.";
+  if (!no_hp) {
+    fieldErrors.no_hp = "Nomor HP wajib diisi.";
+  } else if (!NO_HP_REGEX.test(no_hp)) {
+    fieldErrors.no_hp =
+      "Nomor harus diawali format yang valid, contoh: 08xxxxxxxxxx.";
+  }
+  if (!ciri_barang) fieldErrors.ciri_barang = "Ciri-ciri barang wajib diisi.";
+  if (!persetujuan) {
+    fieldErrors.persetujuan =
+      "Anda harus menyetujui pernyataan data sebelum mengajukan klaim.";
+  }
+
+  if (Object.keys(fieldErrors).length > 0) {
     return {
-      error: "Nama lengkap, nomor HP, dan ciri-ciri barang wajib diisi.",
+      error: "Mohon periksa kembali data yang Anda isi.",
+      fieldErrors,
     };
   }
 

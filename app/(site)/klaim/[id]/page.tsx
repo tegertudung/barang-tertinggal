@@ -21,27 +21,32 @@ export default async function PengajuanKlaimPage({
   if (!item) notFound();
 
   return (
-    <main className="mx-auto w-full max-w-xl flex-1 px-4 py-8">
-      <Link
-        href={`/barang/${item.id}`}
-        className="mb-4 inline-block text-sm text-blue-700 hover:underline dark:text-blue-400"
-      >
-        ← Kembali ke detail barang
-      </Link>
+    <main className="mx-auto w-full max-w-xl flex-1 px-4 py-6">
+      <div className="rounded-2xl border border-black/10 bg-white p-4 sm:p-6">
+        <Link
+          href={`/barang/${item.id}`}
+          className="mb-5 inline-block text-sm font-medium text-brand-primary hover:underline"
+        >
+          ← Kembali ke detail barang
+        </Link>
 
-      <h1 className="mb-1 text-xl font-bold">Form Pengajuan Klaim</h1>
-      <p className="mb-6 text-sm text-black/60 dark:text-white/60">
-        Untuk: <span className="font-medium">{item.nama_barang}</span> (
-        {item.kode_barang})
-      </p>
+        <h1 className="mb-5 text-xl font-bold tracking-tight">
+          Form Pengajuan Klaim
+        </h1>
 
-      {item.status !== "TERSIMPAN" ? (
-        <p className="rounded-md border border-black/10 p-4 text-sm text-black/60 dark:border-white/10 dark:text-white/60">
-          Barang ini sudah tidak dapat diklaim.
-        </p>
-      ) : (
-        <KlaimForm itemId={item.id} />
-      )}
+        {item.status !== "TERSIMPAN" ? (
+          <p className="rounded-lg border border-black/10 p-4 text-sm text-black/60">
+            Barang ini sudah tidak dapat diklaim.
+          </p>
+        ) : (
+          <KlaimForm
+            itemId={item.id}
+            namaBarang={item.nama_barang}
+            lokasi={item.lokasi_ditemukan}
+            kategori={item.kategori}
+          />
+        )}
+      </div>
     </main>
   );
 }

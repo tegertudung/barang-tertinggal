@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardNav } from "@/components/DashboardNav";
@@ -34,9 +35,13 @@ export default async function DashboardLayout({
     <div className="flex min-h-full flex-1 bg-brand-page dark:bg-neutral-950">
       <aside className="hidden w-64 shrink-0 flex-col bg-brand-primary p-4 md:flex dark:bg-brand-primary">
         <Link href="/dashboard" className="mb-6 flex items-center gap-3 px-1">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-white/40 text-xs font-bold text-white/90">
-            BP
-          </span>
+          <Image
+            src="/logo.jpg"
+            alt="Logo Balai Yanpus DPAD DIY"
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-full object-cover"
+          />
           <span className="text-sm font-semibold leading-tight text-white">
             Balai Perpustakaan
             <br />

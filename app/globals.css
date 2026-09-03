@@ -32,3 +32,16 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Placeholder pola garis diagonal untuk area foto barang (publik tidak
+   pernah melihat foto asli barang -- lihat catatan privasi di brief). */
+.pattern-diagonal {
+  background-color: #f3f2ee;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(20, 83, 45, 0.06) 0px,
+    rgba(20, 83, 45, 0.06) 2px,
+    transparent 2px,
+    transparent 10px
+  );
+}
