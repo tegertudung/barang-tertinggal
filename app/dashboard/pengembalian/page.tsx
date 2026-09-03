@@ -39,7 +39,7 @@ export default async function RiwayatPengembalianPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-xl font-bold">Riwayat Pengembalian</h1>
-        <p className="text-sm text-black/60 dark:text-white/60">
+        <p className="text-sm text-black/60">
           Seluruh barang yang sudah dikembalikan ke pemiliknya.
         </p>
       </div>
@@ -51,15 +51,15 @@ export default async function RiwayatPengembalianPage() {
       )}
 
       {!error && riwayat.length === 0 && (
-        <p className="rounded-md border border-black/10 p-6 text-center text-sm text-black/60 dark:border-white/10 dark:text-white/60">
+        <p className="rounded-md border border-black/10 p-6 text-center text-sm text-black/60">
           Belum ada riwayat pengembalian.
         </p>
       )}
 
       {riwayat.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+        <div className="overflow-x-auto rounded-lg border border-black/10">
           <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="bg-black/5 text-xs uppercase text-black/60 dark:bg-white/10 dark:text-white/60">
+            <thead className="bg-black/5 text-xs uppercase text-black/60">
               <tr>
                 <th className="px-4 py-3">Kode</th>
                 <th className="px-4 py-3">Barang</th>
@@ -68,7 +68,7 @@ export default async function RiwayatPengembalianPage() {
                 <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-black/10 dark:divide-white/10">
+            <tbody className="divide-y divide-black/10">
               {riwayat.map((r) => {
                 const klaim = Array.isArray(r.claims) ? r.claims[0] : r.claims;
                 const item = klaim
@@ -88,7 +88,7 @@ export default async function RiwayatPengembalianPage() {
                     <td className="px-4 py-3">
                       {klaim?.nama_pengklaim ?? "-"}
                       {klaim && (
-                        <span className="ml-2 font-mono text-xs text-black/50 dark:text-white/50">
+                        <span className="ml-2 font-mono text-xs text-black/50">
                           {formatNomorKlaim(klaim)}
                         </span>
                       )}
@@ -100,7 +100,7 @@ export default async function RiwayatPengembalianPage() {
                       {klaim && (
                         <Link
                           href={`/dashboard/pengembalian/${klaim.id}`}
-                          className="text-sm font-medium text-blue-700 hover:underline dark:text-blue-400"
+                          className="text-sm font-medium text-blue-700 hover:underline"
                         >
                           Lihat
                         </Link>

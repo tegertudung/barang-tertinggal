@@ -49,7 +49,7 @@ export function VerifikasiKlaimForm({
           onChange={(e) => setCatatan(e.target.value)}
           rows={3}
           placeholder="Catatan hasil verifikasi (opsional)"
-          className="w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5"
+          className="w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
         />
       </div>
 

@@ -107,7 +107,7 @@ export function BarangForm({
 
       <Field label="Foto Barang" htmlFor="foto">
         {fotoUrl && (
-          <div className="relative mb-2 h-32 w-32 overflow-hidden rounded-md border border-black/10 dark:border-white/10">
+          <div className="relative mb-2 h-32 w-32 overflow-hidden rounded-md border border-black/10">
             <Image
               src={fotoUrl}
               alt="Foto saat ini"
@@ -125,7 +125,7 @@ export function BarangForm({
           className="block w-full text-sm"
         />
         {item && (
-          <p className="mt-1 text-xs text-black/50 dark:text-white/50">
+          <p className="mt-1 text-xs text-black/50">
             Biarkan kosong jika tidak ingin mengganti foto.
           </p>
         )}
@@ -153,7 +153,7 @@ export function BarangForm({
             id="status-display"
             disabled
             value="Tersimpan"
-            className={`${inputClass} bg-black/5 dark:bg-white/10`}
+            className={`${inputClass} bg-black/5`}
           />
         </Field>
       )}
@@ -176,7 +176,7 @@ export function BarangForm({
 }
 
 const inputClass =
-  "w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5";
+  "w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600";
 
 function Field({
   label,

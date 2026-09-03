@@ -22,7 +22,7 @@ export function MobileBottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-black/10 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-white/10 dark:bg-neutral-900">
+    <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-black/10 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
       {MENU.map((item) => {
         const active = item.exact
           ? pathname === item.href
@@ -35,8 +35,8 @@ export function MobileBottomNav() {
             href={item.href}
             className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-medium ${
               active
-                ? "text-brand-primary dark:text-green-400"
-                : "text-black/50 dark:text-white/50"
+                ? "text-brand-primary"
+                : "text-black/50"
             }`}
           >
             <Icon className="h-5 w-5" />

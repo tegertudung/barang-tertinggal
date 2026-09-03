@@ -36,7 +36,7 @@ export default async function DataBarangPage({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold">Data Barang</h1>
-          <p className="text-sm text-black/60 dark:text-white/60">
+          <p className="text-sm text-black/60">
             Kelola barang tertinggal yang tercatat.
           </p>
         </div>
@@ -54,12 +54,12 @@ export default async function DataBarangPage({
           name="q"
           defaultValue={q}
           placeholder="Cari kode, nama, atau lokasi..."
-          className="w-full max-w-xs rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5"
+          className="w-full max-w-xs rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
         />
         <select
           name="status"
           defaultValue={status}
-          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5"
+          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
         >
           <option value="">Semua Status</option>
           <option value="TERSIMPAN">Tersimpan</option>
@@ -68,7 +68,7 @@ export default async function DataBarangPage({
         </select>
         <button
           type="submit"
-          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/20 dark:hover:bg-white/10"
+          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5"
         >
           Cari
         </button>
@@ -81,15 +81,15 @@ export default async function DataBarangPage({
       )}
 
       {!error && items.length === 0 && (
-        <p className="rounded-md border border-black/10 p-6 text-center text-sm text-black/60 dark:border-white/10 dark:text-white/60">
+        <p className="rounded-md border border-black/10 p-6 text-center text-sm text-black/60">
           Belum ada barang yang cocok.
         </p>
       )}
 
       {items.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+        <div className="overflow-x-auto rounded-lg border border-black/10">
           <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="bg-black/5 text-xs uppercase text-black/60 dark:bg-white/10 dark:text-white/60">
+            <thead className="bg-black/5 text-xs uppercase text-black/60">
               <tr>
                 <th className="px-4 py-3">Kode</th>
                 <th className="px-4 py-3">Nama Barang</th>
@@ -100,7 +100,7 @@ export default async function DataBarangPage({
                 <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-black/10 dark:divide-white/10">
+            <tbody className="divide-y divide-black/10">
               {items.map((item) => (
                 <tr key={item.id}>
                   <td className="px-4 py-3 font-mono text-xs">
@@ -121,7 +121,7 @@ export default async function DataBarangPage({
                     <div className="flex justify-end gap-3">
                       <Link
                         href={`/dashboard/barang/${item.id}/edit`}
-                        className="text-sm font-medium text-blue-700 hover:underline dark:text-blue-400"
+                        className="text-sm font-medium text-blue-700 hover:underline"
                       >
                         Edit
                       </Link>

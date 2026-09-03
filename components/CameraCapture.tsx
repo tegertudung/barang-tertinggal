@@ -123,7 +123,7 @@ export function CameraCapture({
         src={previewUrl ?? undefined}
         alt="Preview bukti serah terima"
         hidden={!previewUrl}
-        className="w-full max-w-sm rounded-xl border border-black/10 dark:border-white/10"
+        className="w-full max-w-sm rounded-xl border border-black/10"
       />
 
       <video
@@ -131,14 +131,14 @@ export function CameraCapture({
         playsInline
         muted
         hidden={!showVideo}
-        className="w-full max-w-sm rounded-xl border border-black/10 bg-black dark:border-white/10"
+        className="w-full max-w-sm rounded-xl border border-black/10 bg-black"
       />
 
       {previewUrl && (
         <button
           type="button"
           onClick={ambilUlang}
-          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/20 dark:hover:bg-white/10"
+          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5"
         >
           Ambil Ulang
         </button>
@@ -159,7 +159,7 @@ export function CameraCapture({
           <button
             type="button"
             onClick={bukaKamera}
-            className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-black/15 bg-black/[0.02] py-10 text-center hover:border-amber-400 hover:bg-amber-50/50 dark:border-white/15 dark:bg-white/[0.02] dark:hover:border-amber-500/50 dark:hover:bg-amber-500/5"
+            className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-black/15 bg-black/[0.02] py-10 text-center hover:border-amber-400 hover:bg-amber-50/50"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500 text-white">
               <IconCamera className="h-6 w-6" />
@@ -170,9 +170,9 @@ export function CameraCapture({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-black/15 bg-black/[0.02] py-10 text-center hover:border-amber-400 hover:bg-amber-50/50 dark:border-white/15 dark:bg-white/[0.02] dark:hover:border-amber-500/50 dark:hover:bg-amber-500/5"
+            className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-black/15 bg-black/[0.02] py-10 text-center hover:border-amber-400 hover:bg-amber-50/50"
           >
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/10 text-black/60 dark:bg-white/10 dark:text-white/60">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/10 text-black/60">
               <IconUpload className="h-6 w-6" />
             </span>
             <span className="text-sm font-semibold">Upload Foto</span>

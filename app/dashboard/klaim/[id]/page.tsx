@@ -33,7 +33,7 @@ export default async function DetailKlaimPage({
     <div className="max-w-2xl">
       <Link
         href="/dashboard/klaim"
-        className="mb-4 inline-block text-sm text-blue-700 hover:underline dark:text-blue-400"
+        className="mb-4 inline-block text-sm text-blue-700 hover:underline"
       >
         ← Kembali ke daftar klaim
       </Link>
@@ -43,15 +43,15 @@ export default async function DetailKlaimPage({
           <h1 className="text-xl font-bold">
             Klaim #{formatNomorKlaim(klaim)}
           </h1>
-          <p className="text-sm text-black/60 dark:text-white/60">
+          <p className="text-sm text-black/60">
             Diajukan {formatTanggalWaktu(klaim.created_at)}
           </p>
         </div>
         <KlaimStatusBadge status={klaim.status} />
       </div>
 
-      <div className="mb-6 rounded-lg border border-black/10 p-4 dark:border-white/10">
-        <h2 className="mb-3 text-sm font-semibold text-black/60 dark:text-white/60">
+      <div className="mb-6 rounded-lg border border-black/10 p-4">
+        <h2 className="mb-3 text-sm font-semibold text-black/60">
           Barang
         </h2>
         {item ? (
@@ -66,14 +66,14 @@ export default async function DetailKlaimPage({
             />
           </div>
         ) : (
-          <p className="text-sm text-black/60 dark:text-white/60">
+          <p className="text-sm text-black/60">
             Data barang tidak ditemukan.
           </p>
         )}
       </div>
 
-      <div className="mb-6 rounded-lg border border-black/10 p-4 dark:border-white/10">
-        <h2 className="mb-3 text-sm font-semibold text-black/60 dark:text-white/60">
+      <div className="mb-6 rounded-lg border border-black/10 p-4">
+        <h2 className="mb-3 text-sm font-semibold text-black/60">
           Data Pengklaim
         </h2>
         <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
@@ -89,14 +89,14 @@ export default async function DetailKlaimPage({
           />
         </div>
         <div className="mt-3">
-          <p className="text-black/50 dark:text-white/50 text-sm">
+          <p className="text-black/50 text-sm">
             Ciri-ciri Barang
           </p>
           <p className="text-sm">{klaim.ciri_barang}</p>
         </div>
         {klaim.keterangan && (
           <div className="mt-3">
-            <p className="text-black/50 dark:text-white/50 text-sm">
+            <p className="text-black/50 text-sm">
               Keterangan Tambahan
             </p>
             <p className="text-sm">{klaim.keterangan}</p>
@@ -105,15 +105,15 @@ export default async function DetailKlaimPage({
       </div>
 
       {klaim.status === "MENUNGGU" && item ? (
-        <div className="rounded-lg border border-black/10 p-4 dark:border-white/10">
-          <h2 className="mb-3 text-sm font-semibold text-black/60 dark:text-white/60">
+        <div className="rounded-lg border border-black/10 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-black/60">
             Verifikasi Klaim
           </h2>
           <VerifikasiKlaimForm claimId={klaim.id} itemId={klaim.item_id} />
         </div>
       ) : (
-        <div className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/10">
-          <p className="text-black/50 dark:text-white/50">Catatan Petugas</p>
+        <div className="rounded-lg border border-black/10 p-4 text-sm">
+          <p className="text-black/50">Catatan Petugas</p>
           <p>{klaim.catatan_petugas || "-"}</p>
 
           {klaim.status === "DISETUJUI" && (
@@ -133,7 +133,7 @@ export default async function DetailKlaimPage({
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-black/50 dark:text-white/50">{label}</p>
+      <p className="text-black/50">{label}</p>
       <p className="font-medium">{value}</p>
     </div>
   );

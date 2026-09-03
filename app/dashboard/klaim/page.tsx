@@ -37,7 +37,7 @@ export default async function DaftarKlaimPage({
     <div>
       <div className="mb-6">
         <h1 className="text-xl font-bold">Klaim Barang</h1>
-        <p className="text-sm text-black/60 dark:text-white/60">
+        <p className="text-sm text-black/60">
           Seluruh pengajuan klaim dari pengunjung.
         </p>
       </div>
@@ -46,7 +46,7 @@ export default async function DaftarKlaimPage({
         <select
           name="status"
           defaultValue={status}
-          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5"
+          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
         >
           <option value="">Semua Status</option>
           <option value="MENUNGGU">Menunggu Verifikasi</option>
@@ -56,7 +56,7 @@ export default async function DaftarKlaimPage({
         </select>
         <button
           type="submit"
-          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/20 dark:hover:bg-white/10"
+          className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5"
         >
           Filter
         </button>
@@ -69,13 +69,13 @@ export default async function DaftarKlaimPage({
       )}
 
       {!error && klaimList.length === 0 && (
-        <p className="rounded-md border border-black/10 p-6 text-center text-sm text-black/60 dark:border-white/10 dark:text-white/60">
+        <p className="rounded-md border border-black/10 p-6 text-center text-sm text-black/60">
           Belum ada pengajuan klaim.
         </p>
       )}
 
       {klaimList.length > 0 && (
-        <div className="divide-y divide-black/10 rounded-md border border-black/10 dark:divide-white/10 dark:border-white/10">
+        <div className="divide-y divide-black/10 rounded-md border border-black/10">
           {klaimList.map((klaim) => {
             const item = Array.isArray(klaim.items)
               ? klaim.items[0]
@@ -85,14 +85,14 @@ export default async function DaftarKlaimPage({
               <Link
                 key={klaim.id}
                 href={`/dashboard/klaim/${klaim.id}`}
-                className="flex flex-wrap items-center justify-between gap-2 p-4 text-sm hover:bg-black/5 dark:hover:bg-white/5"
+                className="flex flex-wrap items-center justify-between gap-2 p-4 text-sm hover:bg-black/5"
               >
                 <div>
-                  <p className="font-mono text-xs text-black/50 dark:text-white/50">
+                  <p className="font-mono text-xs text-black/50">
                     {formatNomorKlaim(klaim)}
                   </p>
                   <p className="font-medium">{item?.nama_barang ?? "-"}</p>
-                  <p className="text-black/60 dark:text-white/60">
+                  <p className="text-black/60">
                     {klaim.nama_pengklaim} ·{" "}
                     {formatTanggalWaktu(klaim.created_at)}
                   </p>

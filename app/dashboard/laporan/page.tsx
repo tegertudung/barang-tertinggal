@@ -74,14 +74,14 @@ export default async function LaporanPage({
     <div>
       <div className="mb-6">
         <h1 className="text-xl font-bold">Laporan Barang Tertinggal</h1>
-        <p className="text-sm text-black/60 dark:text-white/60">
+        <p className="text-sm text-black/60">
           Statistik & riwayat berdasarkan filter periode, kategori, status,
           dan lokasi.
         </p>
       </div>
 
       <form
-        className="mb-6 grid grid-cols-2 gap-3 rounded-lg border border-black/10 p-4 sm:grid-cols-3 md:grid-cols-5 dark:border-white/10"
+        className="mb-6 grid grid-cols-2 gap-3 rounded-lg border border-black/10 p-4 sm:grid-cols-3 md:grid-cols-5"
         method="get"
       >
         <FilterField label="Dari Tanggal">
@@ -127,7 +127,7 @@ export default async function LaporanPage({
           </button>
           <a
             href="/dashboard/laporan"
-            className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/20 dark:hover:bg-white/10"
+            className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5"
           >
             Reset
           </a>
@@ -144,9 +144,9 @@ export default async function LaporanPage({
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-lg border border-black/10 p-4 dark:border-white/10"
+            className="rounded-lg border border-black/10 p-4"
           >
-            <p className="text-xs text-black/60 dark:text-white/60">
+            <p className="text-xs text-black/60">
               {s.label}
             </p>
             <p className="mt-1 text-2xl font-bold">{s.value}</p>
@@ -154,8 +154,8 @@ export default async function LaporanPage({
         ))}
       </div>
 
-      <div className="mt-8 rounded-lg border border-black/10 p-4 dark:border-white/10">
-        <h2 className="mb-4 text-sm font-semibold text-black/60 dark:text-white/60">
+      <div className="mt-8 rounded-lg border border-black/10 p-4">
+        <h2 className="mb-4 text-sm font-semibold text-black/60">
           Grafik Ringkasan
         </h2>
         <div className="space-y-3">
@@ -165,7 +165,7 @@ export default async function LaporanPage({
                 <span>{s.label}</span>
                 <span className="font-medium">{s.value}</span>
               </div>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/5">
                 <div
                   className={`h-full rounded-full ${s.color}`}
                   style={{ width: `${(s.value / maxValue) * 100}%` }}
@@ -180,7 +180,7 @@ export default async function LaporanPage({
 }
 
 const inputClass =
-  "w-full rounded-md border border-black/15 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-blue-600 dark:border-white/20 dark:bg-white/5";
+  "w-full rounded-md border border-black/15 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-blue-600";
 
 function FilterField({
   label,
@@ -191,7 +191,7 @@ function FilterField({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-black/60 dark:text-white/60">
+      <label className="mb-1 block text-xs font-medium text-black/60">
         {label}
       </label>
       {children}

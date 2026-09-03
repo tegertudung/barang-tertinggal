@@ -32,8 +32,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-full flex-1 bg-brand-page dark:bg-neutral-950">
-      <aside className="hidden w-64 shrink-0 flex-col bg-brand-primary p-4 md:flex dark:bg-brand-primary">
+    <div className="flex min-h-full flex-1 bg-brand-page">
+      <aside className="hidden w-64 shrink-0 flex-col bg-brand-primary p-4 md:flex">
         <Link href="/dashboard" className="mb-6 flex items-center gap-3 px-1">
           <Image
             src="/logo.jpg"
@@ -52,11 +52,11 @@ export default async function DashboardLayout({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-white px-4 py-3 md:px-6 dark:border-white/10 dark:bg-neutral-900">
-          <span className="text-sm font-medium text-black/70 dark:text-white/70">
+        <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-white px-4 py-3 md:px-6">
+          <span className="text-sm font-medium text-black/70">
             {nama}
           </span>
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary/10 text-xs font-bold text-brand-primary dark:bg-brand-primary/30 dark:text-white/90">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary/10 text-xs font-bold text-brand-primary">
             {getInitials(nama)}
           </span>
         </header>

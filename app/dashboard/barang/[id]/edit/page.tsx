@@ -23,7 +23,7 @@ export default async function EditBarangPage({
   return (
     <div>
       <h1 className="mb-1 text-xl font-bold">Edit Barang</h1>
-      <p className="mb-6 text-sm text-black/60 dark:text-white/60">
+      <p className="mb-6 text-sm text-black/60">
         {item.kode_barang} — {item.nama_barang}
       </p>
       <BarangForm action={updateItemWithId} item={item} />
