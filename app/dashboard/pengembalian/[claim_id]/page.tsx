@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PengembalianForm } from "@/components/PengembalianForm";
-import { formatTanggalWaktu } from "@/lib/format";
+import { formatTanggalWaktu, todayFormatted } from "@/lib/format";
 import type { Claim, Item, Return } from "@/types/database";
 import { formatNomorKlaim } from "@/types/database";
 
@@ -14,6 +14,19 @@ export default async function ProsesPengembalianPage({
 }: PageProps<"/dashboard/pengembalian/[claim_id]">) {
   const { claim_id } = await params;
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  let petugasNama = user?.email ?? "Petugas";
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("nama")
+      .eq("id", user.id)
+      .maybeSingle<{ nama: string }>();
+    if (profile?.nama) petugasNama = profile.nama;
+  }
 
   const { data: klaim } = await supabase
     .from("claims")
@@ -50,7 +63,7 @@ export default async function ProsesPengembalianPage({
       <div className="max-w-lg">
         <Link
           href="/dashboard/pengembalian"
-          className="mb-4 inline-block text-sm text-blue-700 hover:underline"
+          className="mb-4 inline-block text-sm text-brand-primary hover:underline"
         >
           ← Kembali ke riwayat pengembalian
         </Link>
@@ -60,7 +73,7 @@ export default async function ProsesPengembalianPage({
           Klaim #{formatNomorKlaim(klaim)} — {item.nama_barang}
         </p>
 
-        <div className="space-y-4 rounded-lg border border-black/10 p-4 text-sm">
+        <div className="space-y-4 rounded-xl border border-black/10 bg-white p-5 text-sm">
           <div>
             <p className="text-black/50">Pengklaim</p>
             <p className="font-medium">{klaim.nama_pengklaim}</p>
@@ -111,11 +124,11 @@ export default async function ProsesPengembalianPage({
       <div className="max-w-lg">
         <Link
           href={`/dashboard/klaim/${klaim.id}`}
-          className="mb-4 inline-block text-sm text-blue-700 hover:underline"
+          className="mb-4 inline-block text-sm text-brand-primary hover:underline"
         >
           ← Kembali ke detail klaim
         </Link>
-        <p className="rounded-md border border-black/10 p-4 text-sm text-black/60">
+        <p className="rounded-md border border-black/10 bg-white p-4 text-sm text-black/60">
           Klaim ini belum/tidak dalam status siap dikembalikan (status saat
           ini: {klaim.status}).
         </p>
@@ -124,39 +137,48 @@ export default async function ProsesPengembalianPage({
   }
 
   return (
-    <div className="max-w-lg">
-      <Link
-        href={`/dashboard/klaim/${klaim.id}`}
-        className="mb-4 inline-block text-sm text-blue-700 hover:underline"
-      >
-        ← Kembali ke detail klaim
-      </Link>
+    <div className="max-w-3xl">
+      <nav className="mb-1 text-sm text-black/50">
+        <Link href="/dashboard/pengembalian" className="hover:text-brand-primary">
+          Layanan Pengembalian
+        </Link>
+        <span className="mx-1">/</span>
+        <span className="font-medium text-brand-primary">Proses Serah Terima</span>
+      </nav>
 
-      <h1 className="mb-1 text-xl font-bold">Pengembalian Barang</h1>
-      <p className="mb-6 text-sm text-black/60">
-        Klaim #{formatNomorKlaim(klaim)}
-      </p>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <h1 className="text-xl font-bold">Proses Serah Terima &amp; Dokumentasi</h1>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-600" />
+          Klaim Disetujui ({formatNomorKlaim(klaim)})
+        </span>
+      </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-3 rounded-lg border border-black/10 p-4 text-sm">
+      <div className="mb-6 grid grid-cols-2 gap-4 rounded-xl border border-black/10 bg-white p-5 text-sm sm:grid-cols-4">
         <div>
-          <p className="text-black/50">Kode Barang</p>
-          <p className="font-medium">{item.kode_barang}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-black/45">Barang Temuan</p>
+          <p className="mt-0.5 font-semibold">{item.nama_barang}</p>
+          <p className="font-mono text-xs text-black/45">{item.kode_barang}</p>
         </div>
         <div>
-          <p className="text-black/50">Barang</p>
-          <p className="font-medium">{item.nama_barang}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-black/45">Pemilik</p>
+          <p className="mt-0.5 font-semibold">{klaim.nama_pengklaim}</p>
+          <p className="text-xs text-black/45">{klaim.no_hp}</p>
         </div>
         <div>
-          <p className="text-black/50">Pengklaim</p>
-          <p className="font-medium">{klaim.nama_pengklaim}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-black/45">Petugas Meja Layanan</p>
+          <p className="mt-0.5 font-semibold">{petugasNama}</p>
         </div>
         <div>
-          <p className="text-black/50">Nomor HP</p>
-          <p className="font-medium">{klaim.no_hp}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-black/45">Tanggal Serah Terima</p>
+          <p className="mt-0.5 font-semibold">{todayFormatted()}</p>
         </div>
       </div>
 
-      <PengembalianForm claimId={klaim.id} itemId={item.id} />
+      <div className="rounded-xl border border-black/10 bg-white p-5">
+        <h2 className="mb-3 text-sm font-semibold">Pengambilan Foto Bukti Serah Terima</h2>
+        <PengembalianForm claimId={klaim.id} itemId={item.id} />
+      </div>
     </div>
   );
 }

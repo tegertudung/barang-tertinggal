@@ -22,7 +22,7 @@ export default async function LaporanPage({
 
   let itemQuery = supabase
     .from("items")
-    .select("id, status")
+    .select("id, status, kategori")
     .order("tanggal_ditemukan", { ascending: false });
 
   if (dari) itemQuery = itemQuery.gte("tanggal_ditemukan", dari);
@@ -69,6 +69,13 @@ export default async function LaporanPage({
   ];
 
   const maxValue = Math.max(1, ...stats.map((s) => s.value));
+
+  const sebaranKategori = KATEGORI_LIST.map((k) => ({
+    kategori: k,
+    jumlah: itemList.filter((i) => i.kategori === k).length,
+  }))
+    .filter((k) => k.jumlah > 0)
+    .sort((a, b) => b.jumlah - a.jumlah);
 
   return (
     <div>
@@ -121,7 +128,7 @@ export default async function LaporanPage({
         <div className="col-span-2 flex items-end gap-2 sm:col-span-3 md:col-span-5">
           <button
             type="submit"
-            className="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+            className="rounded-md bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary-dark"
           >
             Terapkan Filter
           </button>
@@ -144,7 +151,7 @@ export default async function LaporanPage({
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-lg border border-black/10 p-4"
+            className="rounded-lg border border-black/10 bg-white p-4"
           >
             <p className="text-xs text-black/60">
               {s.label}
@@ -154,25 +161,56 @@ export default async function LaporanPage({
         ))}
       </div>
 
-      <div className="mt-8 rounded-lg border border-black/10 p-4">
-        <h2 className="mb-4 text-sm font-semibold text-black/60">
-          Grafik Ringkasan
-        </h2>
-        <div className="space-y-3">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <div className="mb-1 flex justify-between text-xs">
-                <span>{s.label}</span>
-                <span className="font-medium">{s.value}</span>
+      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="rounded-lg border border-black/10 bg-white p-4">
+          <h2 className="mb-4 text-sm font-semibold text-black/60">
+            Grafik Ringkasan
+          </h2>
+          <div className="space-y-3">
+            {stats.map((s) => (
+              <div key={s.label}>
+                <div className="mb-1 flex justify-between text-xs">
+                  <span>{s.label}</span>
+                  <span className="font-medium">{s.value}</span>
+                </div>
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/5">
+                  <div
+                    className={`h-full rounded-full ${s.color}`}
+                    style={{ width: `${(s.value / maxValue) * 100}%` }}
+                  />
+                </div>
               </div>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/5">
-                <div
-                  className={`h-full rounded-full ${s.color}`}
-                  style={{ width: `${(s.value / maxValue) * 100}%` }}
-                />
-              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-black/10 bg-white p-4">
+          <h2 className="mb-4 text-sm font-semibold text-black/60">
+            Sebaran Kategori
+          </h2>
+          {sebaranKategori.length === 0 ? (
+            <p className="text-sm text-black/50">Belum ada data pada filter ini.</p>
+          ) : (
+            <div className="space-y-3">
+              {sebaranKategori.map((k) => {
+                const persen = totalDitemukan > 0 ? Math.round((k.jumlah / totalDitemukan) * 100) : 0;
+                return (
+                  <div key={k.kategori}>
+                    <div className="mb-1 flex justify-between text-xs">
+                      <span>{k.kategori}</span>
+                      <span className="font-medium">{k.jumlah} ({persen}%)</span>
+                    </div>
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/5">
+                      <div
+                        className="h-full rounded-full bg-brand-primary"
+                        style={{ width: `${persen}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
@@ -180,7 +218,7 @@ export default async function LaporanPage({
 }
 
 const inputClass =
-  "w-full rounded-md border border-black/15 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-blue-600";
+  "w-full rounded-md border border-black/15 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-brand-primary";
 
 function FilterField({
   label,

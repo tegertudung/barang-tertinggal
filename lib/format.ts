@@ -50,3 +50,20 @@ export function daysSince(createdAt: string) {
   const ms = Date.now() - new Date(createdAt).getTime();
   return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
 }
+
+/** Tanggal hari ini, format lengkap: "Senin, 26 Oktober 2026". */
+export function todayFormatted() {
+  return new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/** Samarkan sebagian nomor HP, mis. "0812-2344-xxxx". */
+export function maskNoHp(noHp: string) {
+  const digits = noHp.replace(/\D/g, "");
+  if (digits.length <= 4) return noHp;
+  return digits.slice(0, -4) + "xxxx";
+}

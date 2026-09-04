@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardNav } from "@/components/DashboardNav";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { ContohTag } from "@/components/ContohTag";
 
 function getInitials(nama: string) {
   const parts = nama.trim().split(/\s+/).filter(Boolean);
@@ -42,22 +43,46 @@ export default async function DashboardLayout({
             height={36}
             className="h-9 w-9 shrink-0 rounded-full object-cover"
           />
-          <span className="text-sm font-semibold leading-tight text-white">
-            Balai Perpustakaan
-            <br />
-            DPAD DIY
+          <span className="leading-tight">
+            <span className="block text-sm font-bold tracking-wide text-white">
+              SI-BARTING
+            </span>
+            <span className="block text-[11px] font-medium uppercase tracking-wide text-white/60">
+              Balai Yanpus DPAD DIY
+            </span>
           </span>
         </Link>
         <DashboardNav />
+
+        <div className="mt-auto rounded-lg bg-white/10 p-3 text-xs text-white/70">
+          Pos Penjagaan
+          <br />
+          Lobi Utama • Pagi
+          <ContohTag />
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-white px-4 py-3 md:px-6">
-          <span className="text-sm font-medium text-black/70">
-            {nama}
+        <header className="flex items-center justify-between gap-3 border-b border-black/10 bg-white px-4 py-3 md:px-6">
+          <span className="hidden items-center gap-2 text-sm font-medium text-black/60 sm:flex">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Meja Layanan Lobi Utama • Shift Pagi (08:00–15:30)
+            <ContohTag />
           </span>
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary/10 text-xs font-bold text-brand-primary">
-            {getInitials(nama)}
+
+          <span className="flex items-center gap-3">
+            <span className="text-right leading-tight">
+              <span className="block text-sm font-medium text-black/70">
+                {nama}
+              </span>
+              <span className="block text-[11px] text-black/40">
+                NIP 19880315 202101 2 004
+                <ContohTag />
+              </span>
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary/10 text-xs font-bold text-brand-primary">
+              {getInitials(nama)}
+            </span>
           </span>
         </header>
 

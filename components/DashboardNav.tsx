@@ -19,7 +19,7 @@ const MENU = [
   { href: "/dashboard/klaim", label: "Klaim Barang", icon: IconMail },
   { href: "/dashboard/pengembalian", label: "Pengembalian", icon: IconRefresh },
   { href: "/dashboard/laporan", label: "Laporan", icon: IconBarChart },
-  { href: "/dashboard/profil", label: "Profil", icon: IconUser },
+  { href: "/dashboard/profil", label: "Profil Petugas", icon: IconUser },
 ];
 
 export function DashboardNav() {
@@ -55,7 +55,7 @@ export function DashboardNav() {
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white"
         >
           <IconLogout className="h-[18px] w-[18px] shrink-0" />
-          Logout
+          Keluar Sistem
         </button>
       </form>
     </nav>

@@ -1,15 +1,47 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { daysAgoIso, daysSince, formatTanggal } from "@/lib/format";
+import { daysAgoIso, formatTanggalWaktu, todayFormatted } from "@/lib/format";
 import { formatNomorKlaim } from "@/types/database";
 import { KlaimStatusBadge } from "@/components/StatusBadge";
-import { IconBox, IconClock, IconMail, IconRefresh, IconTrendUp } from "@/components/icons";
+import {
+  IconBox,
+  IconCheckCircle,
+  IconMail,
+  IconPin,
+  IconSearch,
+  IconTrendUp,
+} from "@/components/icons";
 
 export const revalidate = 0;
 
+type KlaimRow = {
+  id: string;
+  nama_pengklaim: string;
+  no_hp: string;
+  status: string;
+  nomor_urut: number;
+  created_at: string;
+  items:
+    | { nama_barang: string; kode_barang: string; lokasi_ditemukan: string }
+    | { nama_barang: string; kode_barang: string; lokasi_ditemukan: string }[]
+    | null;
+};
+
+function tombolTindakan(status: string, id: string) {
+  switch (status) {
+    case "MENUNGGU":
+      return { label: "Periksa Klaim", href: `/dashboard/klaim/${id}`, tone: "solid" as const };
+    case "DISETUJUI":
+      return { label: "Proses Serah Terima", href: `/dashboard/pengembalian/${id}`, tone: "solid" as const };
+    case "SELESAI":
+      return { label: "Lihat Bukti", href: `/dashboard/pengembalian/${id}`, tone: "outline" as const };
+    default:
+      return { label: "Detail Penolakan", href: `/dashboard/klaim/${id}`, tone: "outline" as const };
+  }
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
-
   const tigaPuluhHariLalu = daysAgoIso(30);
 
   const [
@@ -18,8 +50,9 @@ export default async function DashboardPage() {
     { count: klaimMenunggu },
     { count: sudahDikembalikan },
     { count: pengembalianBulanIni },
+    { count: klaimSelesai },
+    { count: klaimDitolak },
     { data: klaimTerbaru },
-    { data: perluTindakLanjut },
   ] = await Promise.all([
     supabase.from("items").select("*", { count: "exact", head: true }).eq("status", "TERSIMPAN"),
     supabase
@@ -33,22 +66,49 @@ export default async function DashboardPage() {
       .from("returns")
       .select("*", { count: "exact", head: true })
       .gte("tanggal_pengembalian", tigaPuluhHariLalu),
+    supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", "SELESAI"),
+    supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", "DITOLAK"),
     supabase
       .from("claims")
-      .select("id, nama_pengklaim, status, nomor_urut, created_at, items(nama_barang)")
+      .select("id, nama_pengklaim, no_hp, status, nomor_urut, created_at, items(nama_barang, kode_barang, lokasi_ditemukan)")
       .order("created_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("claims")
-      .select("id, nama_pengklaim, created_at, items(nama_barang)")
-      .eq("status", "MENUNGGU")
-      .order("created_at", { ascending: true })
-      .limit(5),
+      .limit(6),
   ]);
+
+  const totalDiproses = (klaimSelesai ?? 0) + (klaimDitolak ?? 0);
+  const tingkatKeberhasilan =
+    totalDiproses > 0 ? Math.round(((klaimSelesai ?? 0) / totalDiproses) * 100) : null;
+
+  const klaimList = (klaimTerbaru ?? []) as unknown as KlaimRow[];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold">Dashboard</h1>
+      {/* Header sambutan + aksi cepat */}
+      <div className="flex flex-col justify-between gap-4 rounded-xl border border-black/10 bg-white p-5 md:flex-row md:items-center">
+        <div>
+          <p className="mb-1 text-xs font-medium text-black/50">{todayFormatted()}</p>
+          <h1 className="text-xl font-bold">Selamat Bertugas</h1>
+          <p className="text-sm text-black/60">
+            Balai Layanan Perpustakaan DPAD DIY — Meja Informasi Lobi Utama
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Link
+            href="/dashboard/barang/tambah"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-black/15 px-4 py-2 text-sm font-semibold hover:bg-black/5"
+          >
+            <IconBox className="h-4 w-4" />
+            Catat Temuan Baru
+          </Link>
+          <Link
+            href="/dashboard/klaim"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary-dark"
+          >
+            <IconSearch className="h-4 w-4" />
+            Verifikasi Klaim
+          </Link>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
@@ -71,101 +131,103 @@ export default async function DashboardPage() {
           badge={klaimMenunggu ? "Perlu tindak" : undefined}
         />
         <StatCard
-          icon={<IconRefresh className="h-5 w-5" />}
+          icon={<IconCheckCircle className="h-5 w-5" />}
           iconClass="bg-slate-100 text-slate-600"
           value={sudahDikembalikan ?? 0}
           label="Sudah Dikembalikan"
           trend={
             pengembalianBulanIni
               ? `+${pengembalianBulanIni} bulan ini`
-              : undefined
+              : tingkatKeberhasilan !== null
+                ? `Tingkat berhasil ${tingkatKeberhasilan}%`
+                : undefined
           }
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border border-black/10 bg-white lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-black/10 p-4">
-            <h2 className="font-semibold">Klaim Terbaru</h2>
-            <Link
-              href="/dashboard/klaim"
-              className="text-sm text-brand-primary hover:underline"
-            >
-              Lihat semua
-            </Link>
-          </div>
-
-          {!klaimTerbaru || klaimTerbaru.length === 0 ? (
-            <p className="p-6 text-center text-sm text-black/60">
-              Belum ada pengajuan klaim.
-            </p>
-          ) : (
-            <div className="divide-y divide-black/10">
-              {klaimTerbaru.map((klaim) => {
-                const namaBarang = Array.isArray(klaim.items)
-                  ? klaim.items[0]?.nama_barang
-                  : (klaim.items as { nama_barang: string } | null)?.nama_barang;
-
-                return (
-                  <Link
-                    key={klaim.id}
-                    href={`/dashboard/klaim/${klaim.id}`}
-                    className="flex items-center justify-between gap-4 p-4 text-sm hover:bg-black/5"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-mono text-xs text-black/50">
-                        {formatNomorKlaim(klaim)}
-                      </p>
-                      <p className="truncate font-medium">{namaBarang ?? "-"}</p>
-                      <p className="truncate text-black/60">
-                        {klaim.nama_pengklaim} · {formatTanggal(klaim.created_at)}
-                      </p>
-                    </div>
-                    <KlaimStatusBadge status={klaim.status} />
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+      <div className="rounded-xl border border-black/10 bg-white">
+        <div className="flex items-center justify-between border-b border-black/10 p-4">
+          <h2 className="font-semibold">Klaim Terbaru</h2>
+          <Link
+            href="/dashboard/klaim"
+            className="text-sm text-brand-primary hover:underline"
+          >
+            Lihat semua
+          </Link>
         </div>
 
-        <div className="rounded-xl border border-black/10 bg-white">
-          <div className="border-b border-black/10 p-4">
-            <h2 className="font-semibold">Perlu Ditindaklanjuti</h2>
+        {klaimList.length === 0 ? (
+          <p className="p-6 text-center text-sm text-black/60">
+            Belum ada pengajuan klaim.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="bg-black/5 text-xs uppercase text-black/50">
+                <tr>
+                  <th className="px-4 py-3">Nomor Klaim</th>
+                  <th className="px-4 py-3">Deskripsi Barang</th>
+                  <th className="px-4 py-3">Data Pemohon</th>
+                  <th className="px-4 py-3">Waktu Diajukan</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3 text-right">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/10">
+                {klaimList.map((klaim) => {
+                  const item = Array.isArray(klaim.items) ? klaim.items[0] : klaim.items;
+                  const aksi = tombolTindakan(klaim.status, klaim.id);
+
+                  return (
+                    <tr key={klaim.id}>
+                      <td className="px-4 py-3 align-top">
+                        <p className="font-mono text-xs font-semibold">
+                          {formatNomorKlaim(klaim)}
+                        </p>
+                        <p className="font-mono text-[11px] text-black/40">
+                          {item?.kode_barang}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <p className="font-medium">{item?.nama_barang ?? "-"}</p>
+                        {item?.lokasi_ditemukan && (
+                          <p className="mt-0.5 flex items-center gap-1 text-xs text-black/50">
+                            <IconPin className="h-3 w-3 shrink-0" />
+                            {item.lokasi_ditemukan}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <p className="font-medium">{klaim.nama_pengklaim}</p>
+                        <a href={`tel:${klaim.no_hp}`} className="text-xs text-brand-primary hover:underline">
+                          {klaim.no_hp}
+                        </a>
+                      </td>
+                      <td className="px-4 py-3 align-top text-black/60">
+                        {formatTanggalWaktu(klaim.created_at)}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <KlaimStatusBadge status={klaim.status} />
+                      </td>
+                      <td className="px-4 py-3 align-top text-right">
+                        <Link
+                          href={aksi.href}
+                          className={
+                            aksi.tone === "solid"
+                              ? "inline-flex rounded-md bg-brand-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-primary-dark"
+                              : "inline-flex rounded-md border border-black/15 px-3 py-1.5 text-xs font-semibold hover:bg-black/5"
+                          }
+                        >
+                          {aksi.label}
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-
-          {!perluTindakLanjut || perluTindakLanjut.length === 0 ? (
-            <p className="p-6 text-center text-sm text-black/60">
-              Tidak ada klaim yang menunggu.
-            </p>
-          ) : (
-            <div className="space-y-3 p-4">
-              {perluTindakLanjut.map((klaim) => {
-                const namaBarang = Array.isArray(klaim.items)
-                  ? klaim.items[0]?.nama_barang
-                  : (klaim.items as { nama_barang: string } | null)?.nama_barang;
-                const hari = daysSince(klaim.created_at);
-
-                return (
-                  <Link
-                    key={klaim.id}
-                    href={`/dashboard/klaim/${klaim.id}`}
-                    className="block rounded-lg border border-black/10 p-3 text-sm hover:bg-black/5"
-                  >
-                    <p className="font-medium">{namaBarang ?? "-"}</p>
-                    <p className="text-black/60">
-                      {klaim.nama_pengklaim}
-                    </p>
-                    <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
-                      <IconClock className="h-3 w-3" />
-                      {hari === 0 ? "Hari ini" : `${hari} hari menunggu`}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
