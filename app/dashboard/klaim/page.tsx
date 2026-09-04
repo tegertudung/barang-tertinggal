@@ -3,7 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { formatTanggalWaktu } from "@/lib/format";
 import { formatNomorKlaim } from "@/types/database";
 import { KlaimStatusBadge } from "@/components/StatusBadge";
-import { IconPin, IconSearch } from "@/components/icons";
+import { IconInfo, IconPhone, IconPin, IconSearch } from "@/components/icons";
+import { ContohTag } from "@/components/ContohTag";
+import { KATEGORI_LIST } from "@/lib/categories";
 
 export const revalidate = 0;
 
@@ -14,9 +16,10 @@ type KlaimRow = {
   status: string;
   nomor_urut: number;
   created_at: string;
+  updated_at: string;
   items:
-    | { nama_barang: string; kode_barang: string; lokasi_ditemukan: string }
-    | { nama_barang: string; kode_barang: string; lokasi_ditemukan: string }[]
+    | { nama_barang: string; kode_barang: string; lokasi_ditemukan: string; kategori: string }
+    | { nama_barang: string; kode_barang: string; lokasi_ditemukan: string; kategori: string }[]
     | null;
 };
 
@@ -33,18 +36,23 @@ export default async function DaftarKlaimPage({
   const params = await searchParams;
   const status = typeof params.status === "string" ? params.status : "MENUNGGU";
   const q = typeof params.q === "string" ? params.q : "";
+  const kategori = typeof params.kategori === "string" ? params.kategori : "";
+  const dari = typeof params.dari === "string" ? params.dari : "";
+  const sampai = typeof params.sampai === "string" ? params.sampai : "";
 
   const supabase = await createClient();
 
   let query = supabase
     .from("claims")
-    .select("id, nama_pengklaim, no_hp, status, nomor_urut, created_at, items(nama_barang, kode_barang, lokasi_ditemukan)")
+    .select("id, nama_pengklaim, no_hp, status, nomor_urut, created_at, updated_at, items(nama_barang, kode_barang, lokasi_ditemukan, kategori)")
     .eq("status", status)
     .order("created_at", { ascending: false });
 
   if (q) {
     query = query.or(`nama_pengklaim.ilike.%${q}%,no_hp.ilike.%${q}%`);
   }
+  if (dari) query = query.gte("created_at", dari);
+  if (sampai) query = query.lte("created_at", `${sampai}T23:59:59`);
 
   const [{ data, error }, counts] = await Promise.all([
     query,
@@ -55,15 +63,57 @@ export default async function DaftarKlaimPage({
     ),
   ]);
 
-  const klaimList = (data ?? []) as unknown as KlaimRow[];
+  let klaimList = (data ?? []) as unknown as KlaimRow[];
+  if (kategori) {
+    klaimList = klaimList.filter((k) => {
+      const item = Array.isArray(k.items) ? k.items[0] : k.items;
+      return item?.kategori === kategori;
+    });
+  }
+
+  const diproses = klaimList.filter((k) => k.status !== "MENUNGGU");
+  const rataRataHari =
+    diproses.length > 0
+      ? diproses.reduce(
+          (sum, k) => sum + (new Date(k.updated_at).getTime() - new Date(k.created_at).getTime()),
+          0
+        ) /
+        diproses.length /
+        (1000 * 60 * 60 * 24)
+      : null;
 
   return (
     <div>
-      <div className="mb-4">
-        <h1 className="text-xl font-bold">Daftar Pengajuan Klaim Pemustaka</h1>
-        <p className="text-sm text-black/60">
-          Verifikasi keabsahan data kepemilikan barang temuan yang diajukan pemustaka.
-        </p>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <span className="mb-1 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-brand-primary">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
+            Layanan Terpadu DPAD DIY
+          </span>
+          <h1 className="text-xl font-bold">Daftar Pengajuan Klaim Pemustaka</h1>
+          <p className="text-sm text-black/60">
+            Verifikasi keabsahan data kepemilikan barang temuan yang diajukan pemustaka.
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-lg border border-black/10 bg-white px-3 py-2 text-xs font-semibold">
+          Target Verifikasi Shift
+          <ContohTag />
+        </div>
+      </div>
+
+      <div className="mb-4 flex items-start gap-3 rounded-lg border-l-4 border-brand-primary bg-white p-4 text-sm shadow-xs">
+        <IconInfo className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
+        <div className="flex-1">
+          <p className="text-black/70">
+            <strong>SOP Verifikasi Pemilik Sah.</strong> Pastikan memeriksa
+            kecocokan identitas kartu perpustakaan/KTP, nota pembelian, atau
+            ciri unik fisik barang sebelum menyetujui klaim.
+          </p>
+        </div>
+        <span className="shrink-0 cursor-not-allowed rounded-md border border-black/15 px-3 py-1.5 text-xs font-semibold text-black/50">
+          Panduan SOP
+          <ContohTag />
+        </span>
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -101,6 +151,30 @@ export default async function DaftarKlaimPage({
             className="w-full rounded-md border border-black/15 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-brand-primary"
           />
         </div>
+        <input
+          type="date"
+          name="dari"
+          defaultValue={dari}
+          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-brand-primary"
+        />
+        <input
+          type="date"
+          name="sampai"
+          defaultValue={sampai}
+          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-brand-primary"
+        />
+        <select
+          name="kategori"
+          defaultValue={kategori}
+          className="rounded-md border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-brand-primary"
+        >
+          <option value="">Semua Kategori</option>
+          {KATEGORI_LIST.map((k) => (
+            <option key={k} value={k}>
+              {k}
+            </option>
+          ))}
+        </select>
         <button
           type="submit"
           className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium hover:bg-black/5"
@@ -173,6 +247,30 @@ export default async function DaftarKlaimPage({
           </table>
         </div>
       )}
+
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-lg border border-black/10 bg-white p-4">
+          <p className="text-xs text-black/50">Rata-rata Waktu Respons</p>
+          <p className="text-lg font-bold">
+            {rataRataHari !== null ? `${(rataRataHari * 24).toFixed(1)} Jam` : "-"}
+          </p>
+          <p className="text-xs text-black/40">
+            Dihitung dari klaim yang sudah diproses pada filter ini.
+          </p>
+        </div>
+        <div className="flex items-center gap-3 rounded-lg border border-black/10 bg-white p-4">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/5 text-black/50">
+            <IconPhone className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-xs text-black/50">
+              Bantuan Petugas Layanan
+              <ContohTag />
+            </p>
+            <p className="text-sm font-semibold">Ext. 204 / 205</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
