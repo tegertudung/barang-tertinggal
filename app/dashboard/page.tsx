@@ -5,12 +5,16 @@ import { formatNomorKlaim } from "@/types/database";
 import { KlaimStatusBadge } from "@/components/StatusBadge";
 import {
   IconBox,
+  IconCamera,
   IconCheckCircle,
+  IconClock,
+  IconLock,
   IconMail,
   IconPin,
   IconSearch,
   IconTrendUp,
 } from "@/components/icons";
+import { ContohTag } from "@/components/ContohTag";
 
 export const revalidate = 0;
 
@@ -145,6 +149,23 @@ export default async function DashboardPage() {
         />
       </div>
 
+      <div className="flex flex-col items-start gap-3 rounded-xl border border-black/10 bg-white p-4 sm:flex-row sm:items-center">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-primary/10 text-brand-primary">
+          <IconCamera className="h-5 w-5" />
+        </span>
+        <div className="flex-1">
+          <p className="font-semibold">Akses Cepat Perangkat Bergerak Loket</p>
+          <p className="text-sm text-black/60">
+            Petugas dapat membuka SI-BARTING via HP loket untuk verifikasi
+            foto penyerahan barang secara instan.
+          </p>
+        </div>
+        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-black/15 px-4 py-2 text-sm font-medium text-black/50">
+          Buka Scanner HP
+          <ContohTag />
+        </span>
+      </div>
+
       <div className="rounded-xl border border-black/10 bg-white">
         <div className="flex items-center justify-between border-b border-black/10 p-4">
           <h2 className="font-semibold">Klaim Terbaru</h2>
@@ -228,6 +249,55 @@ export default async function DashboardPage() {
             </table>
           </div>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <NoticeCard
+          icon={<IconLock className="h-5 w-5" />}
+          judul="Prosedur Keamanan Barang Berharga"
+          deskripsi={
+            <>
+              Barang kategori emas, perhiasan, uang tunai di atas
+              Rp500.000, serta gawai wajib disimpan di brankas khusus
+              dengan kunci ganda bersama koordinator layanan.
+              <ContohTag />
+            </>
+          }
+        />
+        <NoticeCard
+          icon={<IconClock className="h-5 w-5" />}
+          judul="Masa Retensi Simpan Barang"
+          deskripsi={
+            <>
+              Barang tak bertuan disimpan maksimal 90 hari kalender.
+              Barang mudah busuk dimusnahkan dalam 24 jam dengan berita
+              acara resmi.
+              <ContohTag />
+            </>
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
+function NoticeCard({
+  icon,
+  judul,
+  deskripsi,
+}: {
+  icon: React.ReactNode;
+  judul: string;
+  deskripsi: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-xl border border-black/10 bg-white p-4">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-black/60">
+        {icon}
+      </span>
+      <div>
+        <p className="font-semibold">{judul}</p>
+        <p className="mt-1 text-sm leading-relaxed text-black/60">{deskripsi}</p>
       </div>
     </div>
   );
